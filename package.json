@@ -1,0 +1,28 @@
+{
+  "name": "mount-react",
+  "version": "0.1.0",
+  "description": "A simple library let you mount & unmount React component using JavaScript API",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/speakout/mount-react"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "mount",
+    "unmount"
+  ],
+  "types": "./lib/index.d.ts",
+  "author": "speakout",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^16.3.12",
+    "@types/react-dom": "^16.0.5",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
+  }
+}

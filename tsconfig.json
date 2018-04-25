@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true
+  }
+}
