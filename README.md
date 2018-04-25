@@ -1,6 +1,6 @@
 # Mount React
 
-A simple library let you mount & unmount React component using JavaScript API.
+A simple library that let you mount & unmount React component using JavaScript API.
 
 Sometimes we want to mount & unmount a React component to DOM Dynamically, such as modal component, maybe you want to load them using JavaScript API at sometime instead of define it beforehand in the parent component.
 
