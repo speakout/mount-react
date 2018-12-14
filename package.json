@@ -16,6 +16,10 @@
     "mount",
     "unmount"
   ],
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "types": "./lib/index.d.ts",
   "author": "speakout",
   "license": "MIT",

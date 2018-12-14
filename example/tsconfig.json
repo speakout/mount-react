@@ -6,9 +6,7 @@
       "esnext"
     ],
     "jsx": "react",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "declaration": true
-  },
-  "include": ["./lib"]
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
 }

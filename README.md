@@ -4,80 +4,149 @@ A simple library that let you mount & unmount React component using JavaScript A
 
 Sometimes we want to mount & unmount a React component to DOM dynamically, such as modal component, maybe you want to load them using JavaScript API at sometime instead of define it beforehand in the parent component.
 
-## Basic Usage
+## Example
 
-install `Mount React`
-```
-npm i mount-react
-```
+dialog.tsx
 
-child component `modal.tsx`
 ```TypeScript
 import * as React from 'react'
+import { Modal, Form, Input, Button } from 'antd'
+
+/**
+ * import MountReactProps from mount-react, use with TypeScript
+ */
+import { MountReactProps } from '../../lib'
 
 interface Props {
-  message: string
-  onClose?: () => void
+  onSave?: (name: string) => void
 }
 
-export default class extends React.Component<Props> {
-  render() {
-    return (
-      <div style={{position: 'fixed', left: 0, right: 0, top: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.4)', zIndex: 100, textAlign: 'center'}}>
-        <div style={{width: '200px', margin: '200px auto', padding: '50px', backgroundColor: '#fff'}}>
-          {this.props.message}
-          <div style={{marginTop: '30px'}}><button onClick={this.close.bind(this)}>Close</button></div>
-        </div>
-      </div>
-    )
+interface State {
+  visible: boolean
+  name: string
+}
+
+export default class Dialog extends React.Component<
+  Props & MountReactProps,
+  State
+> {
+  state: State = {
+    visible: true,
+    name: ''
+  }
+
+  destroy() {
+    // destroy current instance
+    this.props.destroy && this.props.destroy()
   }
 
   close() {
-    if (this.props.onClose) {
-      this.props.onClose()
-    }
+    this.setState({
+      visible: false
+    })
+  }
+
+  save() {
+    this.props.onSave && this.props.onSave(this.state.name)
+    this.close()
+  }
+
+  render() {
+    return (
+      <Modal
+        visible={this.state.visible}
+        title="Dialog"
+        maskClosable={false}
+        onCancel={this.close.bind(this)}
+        afterClose={this.destroy.bind(this)}
+        footer={[
+          <Button onClick={this.close.bind(this)} key="cancel">
+            Cancel
+          </Button>,
+          <Button
+            type="primary"
+            disabled={!this.state.name}
+            onClick={this.save.bind(this)}
+            key="save"
+          >
+            Save
+          </Button>
+        ]}
+      >
+        <Form.Item>
+          <Input
+            placeholder="Your name"
+            value={this.state.name}
+            onChange={event => {
+              this.setState({
+                name: event.target.value.trim()
+              })
+            }}
+          />
+        </Form.Item>
+      </Modal>
+    )
   }
 }
 ```
 
-parent component
+index.tsx
+
 ```TypeScript
 import * as React from 'react'
-import mount from 'mount-react'
+import * as ReactDOM from 'react-dom'
+import { Button, message } from 'antd'
 
-import Modal from './modal'
+import Mount from '../../lib'
+import Dialog from './Dialog'
 
-export default class extends React.Component {
-  render() {
-    return (
-      <button onClick={this.open.bind(this)}>Open Modal</button>
+class App extends React.Component {
+  open() {
+    Mount(
+      <Dialog
+        onSave={name => {
+          message.success(`Your name is: ${name}`)
+        }}
+      />
     )
   }
 
-  open() {
-    let unmount = mount(<Modal message="Hello React" onClose={() => unmount()} />)
+  openAndClose() {
+    let unmount = Mount(
+      <Dialog
+        onSave={name => {
+          message.success(`Your name is: ${name}`)
+        }}
+      />
+    )
+    setTimeout(() => {
+      unmount()
+    }, 3000);
+  }
+
+  render() {
+    return (
+      <div>
+        <Button type="primary" onClick={this.open.bind(this)}>
+          Open Dialog
+        </Button>
+        <Button type="primary" onClick={this.openAndClose.bind(this)}>
+          Open Dialog and close
+        </Button>
+      </div>
+    )
   }
 }
+
+ReactDOM.render(<App />, document.querySelector('#app'))
 ```
-In this case, when you click the `Open Modal` button, Mount React will mount the Modal component to DOM dynamically, you don't need to define it in the render function of the parent component. The mount function will return a function, when you call it, it will unmount the component you just mounted.
+In this case, when you click the `Open Dialog` button, Mount React will mount the Dialog component to DOM dynamically, you don't need to define it in the render function of the parent component. The mount function will return a function, when you call it, it will unmount the component you just mounted.
 
 If you did not declare the mount point, the component will be mounted to document.body, you can also mount the component to a custom DOM element, like this
 
 ```TypeScript
-import * as React from 'react'
-import mount from 'mount-react'
-
-export default class extends React.Component {
-  render() {
-    return (
-      <div id="wrap">
-        <button onClick={this.load.bind(this)}>Load</button>
-      </div>
-    )
-  }
-
-  load() {
-    let unmount = mount(<button onClick={() => unmount()}>Close</button>, document.querySelector('#wrap'))
-  }
-}
+let unmount = Mount(
+  <Button onClick={() => unmount()}>Close</Button>,
+  document.querySelector('#wrap')
+)
 ```
